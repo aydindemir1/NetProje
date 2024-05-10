@@ -1,6 +1,7 @@
 ﻿using System;
 
 // Event yayıncısı sınıfı
+// Event konusu
 class Yayinci
 {
     // Event tanımla
