@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NetProje.SharedDTOs;
+using NetProje.Service.SharedDTOs;
 using System.Net;
 
 namespace NetProje.Controllers

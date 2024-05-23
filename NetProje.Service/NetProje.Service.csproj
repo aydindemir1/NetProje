@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Brands\Helpers\" />
+    <Folder Include="Brands\SyncMethods\" />
+    <Folder Include="Cars\Helpers\" />
+    <Folder Include="Cars\SyncMethods\" />
+    <Folder Include="Fuels\Helpers\" />
+    <Folder Include="Fuels\SyncMethods\" />
+    <Folder Include="Models\Helpers\" />
+    <Folder Include="Models\SyncMethods\" />
+    <Folder Include="Roles\AsyncMethods\" />
+    <Folder Include="Roles\Configurations\" />
+    <Folder Include="Roles\DTOs\" />
+    <Folder Include="Roles\Helpers\" />
+    <Folder Include="Roles\RoleCreateUseCase\" />
+    <Folder Include="Roles\SyncMethods\" />
+    <Folder Include="Transmissions\Helpers\" />
+    <Folder Include="Transmissions\SyncMethods\" />
+    <Folder Include="Users\AsyncMethods\" />
+    <Folder Include="Users\Configurations\" />
+    <Folder Include="Users\DTOs\" />
+    <Folder Include="Users\Helpers\" />
+    <Folder Include="Users\SyncMethods\" />
+    <Folder Include="Users\UserCreateUseCase\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.9.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetProje.Repository\NetProje.Repository.csproj" />
+  </ItemGroup>
+
+</Project>
