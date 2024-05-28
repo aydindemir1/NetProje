@@ -1,6 +1,6 @@
 # NetProje
-Projemizde uygulamalı olarak birçok best pratiği .NET CORE API üzerinde uygulamalı olarak işledik.
-İşlediğimiz bazı best pratikler : 
+Projemde uygulamalı olarak birçok best pratiği .NET CORE API üzerinde uygulamalı olarak işledim. Mimari olarak NLayer Mimari kulladım. Database olarak MS SQL SERVER kullandım. ORM olarak Entity Framework Core kullandım. Projem bir araç kiralama sitesinin backend uygulamasıdır.
+İşlediğim bazı best pratikler : 
 1. Hata Yönetimi
 2. Validasyon
 3. Önbellekleme
