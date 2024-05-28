@@ -1,15 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NetProje.API.Filters;
 using NetProje.Controllers;
-using NetProje.Service.Models.AsyncMethods;
-using NetProje.Service.Models.ModelCreateUseCase;
-using NetProje.Service.Models.DTOs;
 using NetProje.Service.Models;
+using NetProje.Service.Models.AsyncMethods;
+using NetProje.Service.Models.DTOs;
+using NetProje.Service.Models.ModelCreateUseCase;
+
 namespace NetProje.API.Models
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class ModelsController : CustomBaseController
     {
-     
+
 
         private readonly IModelService _ModelService;
 
@@ -19,7 +23,7 @@ namespace NetProje.API.Models
         }
 
 
-        
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -45,13 +49,13 @@ namespace NetProje.API.Models
         }
 
 
-       
+
 
         [SendSmsWhenExceptionFilter]
         [HttpPost]
         public async Task<IActionResult> Create(ModelCreateRequestDto request)
         {
-          
+
             var result = await _ModelService.Create(request);
 
             return CreateActionResult(result, nameof(GetById), new { ModelId = result.Data });

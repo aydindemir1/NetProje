@@ -17,133 +17,104 @@ using System.Threading.Tasks;
 
 namespace NetProje.Service.Brands.AsyncMethods
 {
-    public class BrandService(IBrandRepository BrandRepository, IUnitOfWork unitOfWork, IMapper mapper,RedisCacheService redisCacheService)
-         : IBrandService
+    public class BrandService(
+    IBrandRepository _brandRepository,
+    IUnitOfWork _unitOfWork,
+    IMapper _mapper,
+    ICacheService _cacheService) : IBrandService
     {
         private const string BrandCacheKey = "brands";
         private const string BrandCacheKeyAsList = "brands-list";
+
         public async Task<ResponseModelDto<int>> Create(BrandCreateRequestDto request)
         {
-            redisCacheService.Database.KeyDelete(BrandCacheKey);
+            await _cacheService.RemoveAsync(BrandCacheKey);
+
             var newBrand = new Brand
             {
                 Name = request.Name.Trim(),
                 CreatedDate = DateTime.Now
             };
 
-            await BrandRepository.Create(newBrand);
-            await unitOfWork.CommitAsync();
+            await _brandRepository.Create(newBrand);
+            await _unitOfWork.CommitAsync();
 
             return ResponseModelDto<int>.Success(newBrand.Id, HttpStatusCode.Created);
         }
 
         public async Task<ResponseModelDto<NoContent>> Delete(int id)
         {
-            redisCacheService.Database.KeyDelete(BrandCacheKey);
-            await BrandRepository.Delete(id);
-            await unitOfWork.CommitAsync();
+            await _cacheService.RemoveAsync(BrandCacheKey);
+            await _brandRepository.Delete(id);
+            await _unitOfWork.CommitAsync();
             return ResponseModelDto<NoContent>.Success(HttpStatusCode.NoContent);
         }
 
         public async Task<ResponseModelDto<ImmutableList<BrandDto>>> GetAllByPage(int page, int pageSize)
         {
-            var BrandsList = await BrandRepository.GetAllByPage(page, pageSize);
+            var brandsList = await _brandRepository.GetAllByPage(page, pageSize);
+            var brandsListAsDto = _mapper.Map<List<BrandDto>>(brandsList);
 
-
-            var BrandListAsDto = mapper.Map<List<BrandDto>>(BrandsList);
-
-            return ResponseModelDto<ImmutableList<BrandDto>>.Success(BrandListAsDto.ToImmutableList());
+            return ResponseModelDto<ImmutableList<BrandDto>>.Success(brandsListAsDto.ToImmutableList());
         }
 
-        public async Task<ResponseModelDto<ImmutableList<BrandDto>>> GetAll(
-            )
+        public async Task<ResponseModelDto<ImmutableList<BrandDto>>> GetAll()
         {
-            if (redisCacheService.Database.KeyExists(BrandCacheKey))
+            var cachedBrands = await _cacheService.GetAsync<ImmutableList<BrandDto>>(BrandCacheKey);
+            if (cachedBrands != null)
             {
-                var brandListAsJsonFromCache =  redisCacheService.Database.StringGet(BrandCacheKey);
-
-                var brandListFromCache =
-                    JsonSerializer.Deserialize<ImmutableList<BrandDto>>(brandListAsJsonFromCache!);
-
-
-                return ResponseModelDto<ImmutableList<BrandDto>>.Success(brandListFromCache);
-            }
-            var brandList = await BrandRepository.GetAll();
-
-            var brandListAsJson = JsonSerializer.Serialize(brandList);
-            redisCacheService.Database.StringSet(BrandCacheKey, brandListAsJson);
-
-            //brandList.ForEach(brand =>
-            //{
-            //    redisCacheService.Database.ListLeftPush($"{BrandCacheKeyAsList}:{brand.Id}",
-            //        JsonSerializer.Serialize(brand));
-            //});
-
-            foreach (var brand in brandList)
-            {
-                await redisCacheService.Database.ListLeftPushAsync($"{BrandCacheKeyAsList}:{brand.Id}",
-                    JsonSerializer.Serialize(brand));
+                return ResponseModelDto<ImmutableList<BrandDto>>.Success(cachedBrands);
             }
 
-            var BrandListAsDto = mapper.Map<List<BrandDto>>(brandList);
+            var brandList = await _brandRepository.GetAll();
+            var brandListAsDto = _mapper.Map<List<BrandDto>>(brandList);
+            var brandListAsImmutable = brandListAsDto.ToImmutableList();
 
+            await _cacheService.SetAsync(BrandCacheKey, brandListAsImmutable, TimeSpan.FromHours(1)); // Expiration süresi ayarlanabilir
 
-            return ResponseModelDto<ImmutableList<BrandDto>>.Success(BrandListAsDto.ToImmutableList());
+            return ResponseModelDto<ImmutableList<BrandDto>>.Success(brandListAsImmutable);
         }
 
         public async Task<ResponseModelDto<BrandDto?>> GetById(int id)
         {
-
-
-            var customKey = $"{BrandCacheKeyAsList}:{id}";
-
-            if (redisCacheService.Database.KeyExists(customKey))
+            var cacheKey = $"{BrandCacheKeyAsList}:{id}";
+            var cachedBrand = await _cacheService.GetAsync<BrandDto>(cacheKey);
+            if (cachedBrand != null)
             {
-                var brandAsJsonFromCache = redisCacheService.Database.ListGetByIndex(customKey, 0);
-
-                var brandFromCache = JsonSerializer.Deserialize<BrandDto>(brandAsJsonFromCache!);
-
-                return ResponseModelDto<BrandDto?>.Success(brandFromCache);
+                return ResponseModelDto<BrandDto?>.Success(cachedBrand);
             }
-            var hasBrand = await BrandRepository.GetById(id);
 
-            redisCacheService.Database.ListLeftPush($"{BrandCacheKeyAsList}:{hasBrand.Id}",
-                  JsonSerializer.Serialize(hasBrand));
+            var brand = await _brandRepository.GetById(id);
+            var brandAsDto = _mapper.Map<BrandDto>(brand);
 
+            await _cacheService.SetAsync(cacheKey, brandAsDto, TimeSpan.FromHours(1)); // Expiration süresi ayarlanabilir
 
-            var BrandAsDto = mapper.Map<BrandDto>(hasBrand);
-
-            return ResponseModelDto<BrandDto?>.Success(BrandAsDto);
+            return ResponseModelDto<BrandDto?>.Success(brandAsDto);
         }
 
-        public async Task<ResponseModelDto<NoContent>> Update(int BrandId, BrandUpdateRequestDto request)
+        public async Task<ResponseModelDto<NoContent>> Update(int brandId, BrandUpdateRequestDto request)
         {
-            redisCacheService.Database.KeyDelete(BrandCacheKey);
+            await _cacheService.RemoveAsync(BrandCacheKey);
 
-            var hasBrand = await BrandRepository.GetById(BrandId);
+            var brand = await _brandRepository.GetById(brandId);
+            brand.Name = request.Name;
 
+            await _brandRepository.Update(brand);
+            await _unitOfWork.CommitAsync();
 
-            hasBrand.Name = request.Name;
-
-
-
-            await BrandRepository.Update(hasBrand);
-
-
-            await unitOfWork.CommitAsync();
             return ResponseModelDto<NoContent>.Success(HttpStatusCode.NoContent);
         }
 
         public async Task<ResponseModelDto<NoContent>> UpdateBrandName(int id, string name)
         {
-            redisCacheService.Database.KeyDelete(BrandCacheKey);
-            await BrandRepository.UpdateBrandName(name, id);
-
-            await unitOfWork.CommitAsync();
+            await _cacheService.RemoveAsync(BrandCacheKey);
+            await _brandRepository.UpdateBrandName(name, id);
+            await _unitOfWork.CommitAsync();
 
             return ResponseModelDto<NoContent>.Success(HttpStatusCode.NoContent);
         }
-
-     
     }
+
+
+
 }

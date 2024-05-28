@@ -14,6 +14,7 @@ using NetProje.Repository.Fuels;
 using NetProje.Repository.Users;
 using NetProje.Repository.Roles;
 using NetProje.Repository.UsersRoles;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NetProje.Repository
 {
@@ -38,6 +39,7 @@ namespace NetProje.Repository
         public DbSet<Role> Roles { get; set; }
 
         public DbSet<UserRole> UsersRoles { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

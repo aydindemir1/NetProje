@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NetProje.API.Filters;
 using NetProje.Controllers;
-using NetProje.Service.Transmissions.AsyncMethods;
-using NetProje.Service.Transmissions.TransmissionCreateUseCase;
-using NetProje.Service.Transmissions.DTOs;
 using NetProje.Service.Transmissions;
+using NetProje.Service.Transmissions.AsyncMethods;
+using NetProje.Service.Transmissions.DTOs;
+using NetProje.Service.Transmissions.TransmissionCreateUseCase;
 
 namespace NetProje.API.Transmissions
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class TransmissionsController : CustomBaseController
     {
 

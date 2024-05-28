@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NetProje.API.Filters;
 using NetProje.Controllers;
-using NetProje.Service.Fuels.AsyncMethods;
-using NetProje.Service.Fuels.FuelCreateUseCase;
-using NetProje.Service.Fuels.DTOs;
 using NetProje.Service.Fuels;
+using NetProje.Service.Fuels.AsyncMethods;
+using NetProje.Service.Fuels.DTOs;
+using NetProje.Service.Fuels.FuelCreateUseCase;
 
 namespace NetProje.API.Fuels
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class FuelsController : CustomBaseController
     {
 

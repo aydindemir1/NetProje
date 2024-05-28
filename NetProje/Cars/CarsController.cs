@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NetProje.API.Filters;
 using NetProje.Controllers;
 using NetProje.Service.Cars;
@@ -8,6 +9,8 @@ using NetProje.Service.Cars.DTOs;
 
 namespace NetProje.API.Cars
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class CarsController : CustomBaseController
     {
 
@@ -62,7 +65,7 @@ namespace NetProje.API.Cars
         [HttpPut("UpdateCarPlate")]
         public async Task<IActionResult> UpdateCarPlate(int id, string plate)
         {
-            return CreateActionResult(await _CarService.UpdateCarPlate(id,plate));
+            return CreateActionResult(await _CarService.UpdateCarPlate(id, plate));
         }
 
         [ServiceFilter(typeof(NotFoundFilter))]

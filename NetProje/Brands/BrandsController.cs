@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NetProje.API.Filters;
 using NetProje.Controllers;
 using NetProje.Service.Brands;
@@ -8,9 +9,11 @@ using NetProje.Service.Brands.DTOs;
 
 namespace NetProje.API.Brands
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class BrandsController : CustomBaseController
     {
-        
+
 
         private readonly IBrandService _BrandService;
 
@@ -20,7 +23,7 @@ namespace NetProje.API.Brands
         }
 
 
-       
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -46,13 +49,13 @@ namespace NetProje.API.Brands
         }
 
 
-      
+
 
         [SendSmsWhenExceptionFilter]
         [HttpPost]
         public async Task<IActionResult> Create(BrandCreateRequestDto request)
         {
-           
+
             var result = await _BrandService.Create(request);
 
             return CreateActionResult(result, nameof(GetById), new { BrandId = result.Data });
@@ -73,7 +76,7 @@ namespace NetProje.API.Brands
         }
 
 
-     
+
 
 
         [ServiceFilter(typeof(NotFoundFilter))]

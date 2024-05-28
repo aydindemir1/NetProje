@@ -13,22 +13,36 @@ namespace NetProje.Service.CacheService.RedisCacheService
 {
     public class RedisCacheService : IRedisCacheService
     {
-        public IDatabase Database;
+        private readonly IDatabase _database;
 
         public RedisCacheService(string url)
         {
             var connectionMultiplexer = ConnectionMultiplexer.Connect(url);
-
-
             connectionMultiplexer.ConnectionFailed += ConnectionMultiplexer_ConnectionFailed;
-
-
-            Database = connectionMultiplexer.GetDatabase(1);
+            _database = connectionMultiplexer.GetDatabase(1);
         }
 
-        private void ConnectionMultiplexer_ConnectionFailed(object? sender, ConnectionFailedEventArgs e)
+        private void ConnectionMultiplexer_ConnectionFailed(object sender, ConnectionFailedEventArgs e)
         {
             throw new NotImplementedException();
         }
+
+        public async Task RemoveAsync(string key)
+        {
+            await _database.KeyDeleteAsync(key);
+        }
+
+        public async Task SetAsync<T>(string key, T value, TimeSpan expiration)
+        {
+            var json = JsonSerializer.Serialize(value);
+            await _database.StringSetAsync(key, json, expiration);
+        }
+
+        public async Task<T> GetAsync<T>(string key)
+        {
+            var value = await _database.StringGetAsync(key);
+            return value.HasValue ? JsonSerializer.Deserialize<T>(value) : default;
+        }
     }
+
 }
