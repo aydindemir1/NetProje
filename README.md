@@ -13,3 +13,4 @@ Projemde uygulamalı olarak birçok best pratiği .NET CORE API üzerinde uygula
 10. Pagination ve Filtering
 11. Use DTOs ( Data Transfer Objects )
 12. RESTful Api Design
+13. Logging
