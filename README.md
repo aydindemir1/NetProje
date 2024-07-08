@@ -14,3 +14,9 @@ Projemde uygulamalı olarak birçok best pratiği .NET CORE API üzerinde uygula
 11. Use DTOs ( Data Transfer Objects )
 12. RESTful Api Design
 13. Logging
+
+Hafta Ödevleri. Var olan projemizi derste yaptığımız gibi katmanlı mimariye taşıyacağız. Katmanlı mimari projemizde : Fluent validation- mapper library'leri mutlaka olacak ve kullanılacaktır. Dataların Redis'ten gelmesi ile ilgili geliştirme yapılacaktır. Projede generic repository ve Unit Of Work kullanılacaktır. en az 3 tane entity olacak. Ve bu entity'ler ile ilgili custom sorgular için kendine ait repository sınıfları oluşturulacaktır. Her entity'nin CRUD endpointleri ve custom endpoint'leri olacaktır. En az 2 farklı senaryoda filter'ların kullanılması ile ilgili örnek projede bulunacaktır.
+
+Katmanlı Mimari Projesine Serilog Entegrasyonu:
+
+Katmanlı mimari kullandığımız mevcut projeye, Serilog kütüphanesini ekleyerek tüm hata (exception) ve log kayıtlarının SQL Server veritabanına gönderilmesini sağlayınız. Bu ödevi yaparken, Serilog konfigürasyonlarının doğru yapıldığından ve logların veritabanında düzgün bir şekilde saklandığından emin olunuz.
